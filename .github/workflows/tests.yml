@@ -13,7 +13,7 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       
     - name: Install dependencies
       run: |
@@ -34,24 +34,33 @@ jobs:
       run: |
         echo "Запуск тестов..."
         ./test_runner
-        if [ $? -eq 0 ]; then
+        TEST_RESULT=$?
+        if [ $TEST_RESULT -eq 0 ]; then
           echo "🎉 Все тесты прошли успешно!"
         else
           echo "💥 Обнаружены проваленные тесты!"
-          exit 1
+          exit $TEST_RESULT
         fi
       
     - name: Test main application
       run: |
         echo "Тестирование основного приложения..."
-        echo "5" | timeout 30s ./narrow_bridge || true
-        echo "✅ Основное приложение работает"
+        echo "3" | timeout 30s ./narrow_bridge || echo "Основное приложение завершило работу"
+        echo "✅ Основное приложение протестировано"
       
     - name: Upload test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: test-executables
         path: |
           narrow_bridge
           test_runner
         retention-days: 7
+        
+    - name: Create test report
+      if: always()
+      run: |
+        echo "=== ОТЧЕТ О ТЕСТИРОВАНИИ ==="
+        echo "Время: $(date)"
+        echo "Коммит: ${{ github.sha }}"
+        echo "Ветка: ${{ github.ref }}"
