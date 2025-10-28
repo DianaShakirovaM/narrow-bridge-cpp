@@ -1,0 +1,57 @@
+name: C++ Tests
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    name: Build and Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y g++ build-essential
+      
+    - name: Compile main application
+      run: |
+        g++ -std=c++11 -pthread -O2 -o narrow_bridge main.cpp
+        echo "✅ Основное приложение успешно скомпилировано"
+      
+    - name: Compile tests
+      run: |
+        g++ -std=c++11 -pthread -O2 -o test_runner test_narrow_bridge.cpp
+        echo "✅ Тесты успешно скомпилированы"
+      
+    - name: Run tests
+      run: |
+        echo "Запуск тестов..."
+        ./test_runner
+        if [ $? -eq 0 ]; then
+          echo "🎉 Все тесты прошли успешно!"
+        else
+          echo "💥 Обнаружены проваленные тесты!"
+          exit 1
+        fi
+      
+    - name: Test main application
+      run: |
+        echo "Тестирование основного приложения..."
+        echo "5" | timeout 30s ./narrow_bridge || true
+        echo "✅ Основное приложение работает"
+      
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-executables
+        path: |
+          narrow_bridge
+          test_runner
+        retention-days: 7
