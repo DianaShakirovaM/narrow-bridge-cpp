@@ -147,3 +147,33 @@ private:
         cv.notify_all();
     }
 };
+
+// Функция для запуска моделирования движения
+void simulateTraffic(NarrowBridge& bridge, int num_cars) {
+    std::vector<std::thread> cars; // Вектор для хранения потоков-машин
+    std::random_device rd;         // Генератор случайных чисел
+    std::mt19937 gen(rd());        // Вихрь Мерсенна для случайности
+    std::uniform_int_distribution<> dir_dist(0, 1); // Равномерное распределение 0-1
+    
+    // Создаем потоки для каждой машины
+    for (int i = 1; i <= num_cars; ++i) {
+        // Случайно выбираем направление машины
+        if (dir_dist(gen) == 0) {
+            // Создаем поток для машины с севера
+            cars.emplace_back(&NarrowBridge::arriveFromNorth, &bridge, i);
+        } else {
+            // Создаем поток для машины с юга
+            cars.emplace_back(&NarrowBridge::arriveFromSouth, &bridge, i);
+        }
+        
+        // Случайная задержка между появлением машин
+        std::this_thread::sleep_for(std::chrono::milliseconds(100 + gen() % 200));
+    }
+    
+    // Ожидаем завершения всех потоков
+    for (auto& car : cars) {
+        if (car.joinable()) {
+            car.join(); // Блокируемся, пока поток не завершится
+        }
+    }
+}
