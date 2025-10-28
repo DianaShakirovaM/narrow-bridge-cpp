@@ -297,10 +297,19 @@ int main() {
     
     // Выводим общую статистику
     std::cout << "\n=== ОБЩАЯ СТАТИСТИКА ТЕСТИРОВАНИЯ ===" << std::endl;
-    test1.print_summary();
+    
+    // Собираем общую статистику из всех тестов
+    int total_passed = test1.get_passed_tests() + test2.get_passed_tests() + 
+                      test3.get_passed_tests() + test4.get_passed_tests() + 
+                      test5.get_passed_tests();
+    int total_tests = test1.get_total_tests() + test2.get_total_tests() + 
+                     test3.get_total_tests() + test4.get_total_tests() + 
+                     test5.get_total_tests();
+    
+    std::cout << "Пройдено: " << total_passed << "/" << total_tests << " тестов" << std::endl;
     
     // Проверяем общий успех
-    if (test1.passed_tests == test1.total_tests) {
+    if (total_passed == total_tests) {
         std::cout << "\n🎉 ВСЕ ТЕСТЫ ПРОЙДЕНЫ УСПЕШНО!" << std::endl;
         return 0;
     } else {

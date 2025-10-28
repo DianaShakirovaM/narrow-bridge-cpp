@@ -6,6 +6,7 @@
 #include <iostream>
 #include <thread>
 #include <vector>
+#include <string>
 
 // Базовый класс для тестов
 class TestBase {
@@ -34,6 +35,14 @@ public:
         } else {
             std::cout << "❌ НЕКОТОРЫЕ ТЕСТЫ ПРОВАЛЕНЫ!" << std::endl;
         }
+    }
+    
+    // Геттеры для доступа к статистике
+    int get_passed_tests() const { return passed_tests; }
+    int get_total_tests() const { return total_tests; }
+    
+    bool all_tests_passed() const {
+        return passed_tests == total_tests;
     }
 };
 
