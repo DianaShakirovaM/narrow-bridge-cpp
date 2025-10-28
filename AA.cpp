@@ -177,3 +177,41 @@ void simulateTraffic(NarrowBridge& bridge, int num_cars) {
         }
     }
 }
+
+// Функция для безопасного ввода количества машин
+int getNumberOfCars() {
+    std::string input; // Переменная для хранения ввода
+    int num_cars;      // Переменная для результата
+    
+    while (true) {
+        std::cout << "Введите количество машин (1-50): ";
+        std::getline(std::cin, input); // Читаем всю строку
+        
+        // Простая проверка, что все символы - цифры
+        bool is_valid = true;
+        for (char c : input) {
+            if (!std::isdigit(c)) {
+                is_valid = false;
+                break;
+            }
+        }
+        
+        // Если ввод не тот - сообщаем об ошибке
+        if (!is_valid || input.empty()) {
+            std::cout << "Ошибка: введите целое положительное число!" << std::endl;
+            continue;
+        }
+        
+        // Преобразуем строку в число
+        num_cars = std::stoi(input);
+        
+        // Проверяем диапазон
+        if (num_cars < 1) {
+            std::cout << "Ошибка: число должно быть не менее 1!" << std::endl;
+        } else if (num_cars > 50) {
+            std::cout << "Ошибка: слишком много машин! Максимум 50." << std::endl;
+        } else {
+            return num_cars; // Возвращаем значение
+        }
+    }
+}
