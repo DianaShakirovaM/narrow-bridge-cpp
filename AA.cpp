@@ -215,3 +215,51 @@ int getNumberOfCars() {
         }
     }
 }
+
+int main() {
+    // Создаем объект моста
+    NarrowBridge bridge;
+    // Получаем количество машин от пользователя
+    int num_cars = getNumberOfCars();    
+    
+    std::cout << "=== МОДЕЛИРОВАНИЕ УЗКОГО МОСТА ===" << std::endl;
+    std::cout << "Количество машин: " << num_cars << std::endl;
+    std::cout << "=================================" << std::endl;
+    
+    // Засекаем время начала выполнения
+    auto start_time = std::chrono::steady_clock::now();
+    
+    try {
+        // Запускаем моделирование
+        simulateTraffic(bridge, num_cars);
+        
+        // Засекаем время окончания
+        auto end_time = std::chrono::steady_clock::now();
+        // Вычисляем длительность выполнения
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time);
+        
+        std::cout << "=================================" << std::endl;
+        
+        // Получаем статистику
+        int successful = bridge.getSuccessfulCrossings();
+        int total = bridge.getTotalCars();
+        
+        std::cout << "Время выполнения: " << duration.count() << " мс" << std::endl;
+        
+        // Проверяем успешность выполнения
+        if (successful == total && total == num_cars) {
+            std::cout << "УСПЕХ: Все " << successful << " машин успешно переехали мост!" << std::endl;
+            std::cout << "Моделирование завершено без ошибок" << std::endl;
+        } else {
+            std::cout << "ОШИБКА: Переехало только " << successful << " из " << total << " машин" << std::endl;
+            std::cout << "Ожидалось: " << num_cars << " машин" << std::endl;
+        }
+        
+    } catch (const std::exception& e) {
+        // Обрабатываем возможные исключения
+        std::cout << "=================================" << std::endl;
+        std::cout << "КРИТИЧЕСКАЯ ОШИБКА: " << e.what() << std::endl;
+    }
+    
+    return 0;
+}
